@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-SimplePortfolio::Application.config.secret_key_base = '9ebceef81b25307f1a169911db100994a0dc45a0e1a4b57976e09a726ca996631dc4069993b43268d434caaa5483217fffd7e9be961ce0169284644f4f37c9e8'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+SimplePortfolio::Application.config.secret_key_base = secure_token
